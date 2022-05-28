@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../lib/jquery.js"></script>
+  <script src="../lib/template-web.js"></script>
+  
+</head>
+<body>
+  <div id="container"></div>
+  
+  <script type="text/html" id="tpl-user">
+    <div id="title"></div>
+    <div>姓名：<span id="name">{{name}}</span></div>
+    <div>年龄：<span id="age">{{age}}</span></div>
+    <div>会员：<span id="isVIP">{{isVIP}}</span></div>
+    <div>注册时间：<span id="">{{regTime | dateFormat}}</span></div>
+
+    <div>爱好
+      <ul id="hobby">
+        {{each hobby}}
+          <li>{{$value}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  </script>
+
+  <script>
+    template.defaults.imports.dateFormat = function(regTime){
+      let y = regTime.getFullYear()
+      let m = regTime.getMonth() + 1
+      let d = regTime.getDate()
+
+      return y+'-'+m+'-'+d
+    }
+    var data = {
+      title: '<h3>用户信息</h3>',
+      name: 'zs',
+      age: 20,
+      isVIP: true,
+      regTime: new Date(),
+      hobby: ['吃饭', '睡觉', '打豆豆']
+    }
+
+    // 调用template函数
+    let htmlStr = template('tpl-user', data)
+    console.log(htmlStr);
+
+    
+    $('#container').html(htmlStr)
+  </script>
+</body>
+</html>

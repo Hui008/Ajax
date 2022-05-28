@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../lib/bootstrap.css">
+</head>
+<body>
+  <input type="file" id="flie1">
+  <button id="btnUpload">上传文件</button>
+  <div class="progress" style="width: 800px; margin: 20px;">
+    <div class="progress-bar progress-bar-success progress-bar-striped" style="width: 40%">
+      40%
+    </div>
+</div>
+  <br> <br>
+  <img src="" alt="" id="img" width="800">
+
+
+  <script>
+    let btnUpload = document.querySelector('#btnUpload')
+
+    btnUpload.addEventListener('click', function() {
+
+      let files = document.querySelector('#flie1').files
+      if(files.length <= 0) {
+        return alert('请选择要上传的文件')
+      }
+      let fd = new FormData()
+      fd.append('avatar', files[0])
+
+      let xhr = new XMLHttpRequest()
+
+      // 监听文件上传的进度
+      xhr.upload.onprogress = function(e) {
+        if(e.lengthComputable) {
+          let procentComplete = Math.ceil((e.loaded / e.total) * 100)
+          console.log(procentComplete);
+        }
+      }
+
+      xhr.open('POST', 'http://www.liulongbin.top:3006/api/upload/avatar')
+      xhr.send(fd)
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          let data = JSON.parse(xhr.responseText)
+          document.querySelector('#img').src = 'http://www.liulongbin.top:3006' + data.url
+          return 
+      } else {
+        console.log('上传失败');
+      }
+    }
+  })
+  </Script>
+</body>
+</html>

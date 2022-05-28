@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../lib/bootstrap.css">
+  <script src="../lib/jquery.js"></script>
+
+  <style>
+    body {
+      padding: 15px;
+    }
+    .list-group-item {
+      height: 40px;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Panel title</h3>
+      </div>
+      <form class="panel-body" id="btnAddForm">
+        <div>评论人：</div>
+        <input type="text" class="form-control" name="username">
+        <div>评论内容：</div>
+       <textarea class="form-control" name="content"></textarea>
+
+       <button type="submit" class="btn btn-primary">发表评论</button>
+      </form>
+  </div>
+  
+  
+  <ul class="list-group" id="cmt-list">
+    
+  </ul>
+  
+  <script>
+    function getCommentList() {
+      $.ajax({
+        methods: 'get',
+        url: 'http://www.liulongbin.top:3006/api/cmtlist',
+        success: function(res) {
+          if(res.status !== 200) {
+            console.log('获取数据失败');
+          }
+          var rows = []
+          $.each(res.data, function(i,item) {
+            rows.push(`<li class="list-group-item">
+              ${item.content}
+              <span class="badge" style="background-color: #F0AD4E;">评论时间：${item.time}</span>
+              <span class="badge" style="background-color: #5BC0DE;">评论人：${item.username}</span>
+            </li>`)
+          })
+          $('#cmt-list').empty().append(rows.join(''))
+        }
+      })
+    }
+
+    getCommentList()
+    $(function() {
+      $('#btnAddForm').on('submit', function(e) {
+        // 阻止表单默认提交行为
+        e.preventDefault()
+
+        let data = $(this).serialize()
+        console.log(data);
+        /* console.log(data);
+        $.ajax({
+          methods: 'post',
+          url: 'http://www.liulongbin.top:3006/api/addcmt',
+          data: data,
+          success: function(res) {
+            if(res !==  201) {
+              console.log('上传失败');
+            }
+            console.log(res);
+          }
+        }) */
+        $.post('http://www.liulongbin.top:3006/api/addcmt', data, function(res) {
+          if(res.status !==  201) {
+              console.log('上传失败');
+              return
+            }
+            getCommentList()
+            // 重置表单快捷方法
+            $('#btnAddForm')[0].reset()
+        })
+      })
+    })
+  </script>
+</body>
+</html>
